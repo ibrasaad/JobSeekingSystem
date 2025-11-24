@@ -23,10 +23,10 @@ public class JobApplicationService {
         return jobApplicationRepository.findAll();
     }
 
-    public int addjobApplicant (Integer id, Integer id2 ,JobApplication jobApplication){
+    public int addjobApplicant (Integer jobid, Integer userid ,JobApplication jobApplication){
 
-        JobPost job =jobPostRepository.getById(id);
-        User user = userRepository.getById(id);
+        JobPost job =jobPostRepository.findById(jobid).orElse(null);
+        User user = userRepository.findById(userid).orElse(null);
 
         if(job == null){
             return 1;
@@ -34,15 +34,17 @@ public class JobApplicationService {
         if(user == null){
             return 2;
         }
-        if(!job.getId().equals(id) ){
+        if(!job.getId().equals(jobid) ){
             return 3;
         }
-        if(!user.getId().equals(id2)){
+        if(!user.getId().equals(userid)){
             return 4;
         }
-        if(!user.getRole().equals("job_seeker")){
+        if(!user.getRole().equalsIgnoreCase("job_seeker")){
             return 5;
         }
+        jobApplication.setUser_id(user.getId());
+        jobApplication.setJobPosted_id(job.getId());
         jobApplicationRepository.save(jobApplication);
         return 6;
     }
